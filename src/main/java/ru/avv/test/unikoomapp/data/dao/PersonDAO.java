@@ -8,5 +8,7 @@ import java.util.List;
  * The implementing class must be able to provide a list of all users
  */
 public interface PersonDAO {
-    public List<Person> findAll();
+    List<Person> findAll();
+    Person findById(String id);
+    boolean addOne(Person person);
 }

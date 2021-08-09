@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
- * Data storage and access mechanism layer the Person table/L
+ * Data storage and access mechanism layer the Person table
  */
 @Repository
 public class PersonDAOImpl implements PersonDAO {
@@ -29,5 +29,21 @@ public class PersonDAOImpl implements PersonDAO {
         Query<Person> query = session.createQuery("from Person", Person.class);
         List<Person> people = query.getResultList();
         return people;
+    }
+
+    @Transactional
+    public Person findById(String id) {
+        Session session = entityManager.unwrap(Session.class);
+        Query<Person> query = session.createQuery("from Person where id = :id");
+        query.setParameter("id", Long.decode(id));
+        Person person = query.getSingleResult();
+        return person;
+    }
+
+    @Transactional
+    public boolean addOne(Person person) {
+        Session session = entityManager.unwrap(Session.class);
+        session.save(person);
+        return true;
     }
 }
