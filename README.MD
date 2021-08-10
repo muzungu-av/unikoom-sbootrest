@@ -18,13 +18,13 @@ Use: SpringBoot, Jpa, Postgres DB
 - change my-postgres.conf
 
 - run postgres with new custom config
-> docker run -d --name postgres
-> -p 5432:5432
-> -v "$PWD/my-postgres.conf":/etc/postgresql/postgresql.conf
-> -v /DATA/tmp_dockers_mount/postgres:/var/lib/postgresql/data
-> -e POSTGRES_PASSWORD=123456
-> -e PGDATA=/var/lib/postgresql/data
-> -c 'config_file=/etc/postgresql/postgresql.conf'
+> docker run -d --name postgres \
+> -p 5432:5432 \
+> -v "$PWD/my-postgres.conf":/etc/postgresql/postgresql.conf \
+> -v /DATA/tmp_dockers_mount/postgres:/var/lib/postgresql/data \
+> -e POSTGRES_PASSWORD=123456 \
+> -e PGDATA=/var/lib/postgresql/data \
+> -c 'config_file=/etc/postgresql/postgresql.conf' \
 > postgres
 
 - creating a database in a container
@@ -35,23 +35,35 @@ Use: SpringBoot, Jpa, Postgres DB
 
 > CREATE DATABASE UNIKOOM;
 
-- create table
-
-> CREATE TABLE person (
->     id SERIAL PRIMARY KEY NOT NULL,
->     user_name text,
->     fio text,
->     email text,
->     birth_date date,
->     sex boolean);
+- create tables
+ 
+> CREATE TABLE person ( \
+>   id SERIAL PRIMARY KEY NOT NULL, \
+>   user_name text NOT NULL, \
+>   fio text, \
+>   email text NOT NULL, \
+>   birth_date date, \
+>   sex boolean, \
+>   UNIQUE (user_name), \
+>   UNIQUE (email));
  
 > CREATE SEQUENCE JPA_SEQUENCE START WITH 1 INCREMENT BY 1 NO CYCLE;
 
+> CREATE TABLE foto ( \
+>   id SERIAL PRIMARY KEY NOT NULL, \
+>   file_hash text NOT NULL, \
+>   file_name text NOT NULL, \
+>   person_id int NOT NULL, \
+>   UNIQUE (file_hash), \
+>   UNIQUE (file_hash, person_id), \
+>   CONSTRAINT person_id \
+>   FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE)
+
 - Optionally, you can set a couple of values.
 
-> insert into person (id, user_name, fio, email, birth_date, sex)
-> VALUES(1, 'petr','Petr Avakin', 'petr@mail.ru', '1990-01-05', true);
+> INSERT INTO person (id, user_name, fio, email, birth_date, sex) \
+> VALUES (1, 'petr','Petr Avakin', 'petr@mail.ru', '1990-01-05', true);
  
-> insert into person (id, user_name, fio, email, birth_date, sex)
-> VALUES(2, 'olga','Olga Avakina', 'olga@mail.ru', '1990-12-01', false);
+> INSERT INTO person (id, user_name, fio, email, birth_date, sex) \
+> VALUES (2, 'olga','Olga Avakina', 'olga@mail.ru', '1990-12-01', false);
 
