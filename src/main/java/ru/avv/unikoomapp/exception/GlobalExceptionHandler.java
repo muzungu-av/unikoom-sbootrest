@@ -1,4 +1,4 @@
-package ru.avv.test.unikoomapp.exception;
+package ru.avv.unikoomapp.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler(value = {InvalidFormatException.class})
     @ResponseBody
     ResponseEntity<ErrorResponse> handleInvalidFormatException(HttpServletRequest request, InvalidFormatException ex) {
@@ -42,7 +41,6 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse("Illegal Argument", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     @ExceptionHandler(value = {NullPointerException.class})
     @ResponseBody

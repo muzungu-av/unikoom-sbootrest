@@ -1,4 +1,4 @@
-package ru.avv.test.unikoomapp.data.entity;
+package ru.avv.unikoomapp.data.entity;
 
 import javax.persistence.*;
 import java.util.Date;

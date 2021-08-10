@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>ru.avv.test</groupId>
+    <groupId>ru.avv</groupId>
     <artifactId>unikoomapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>unikoomapp</name>

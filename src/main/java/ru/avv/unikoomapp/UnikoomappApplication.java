@@ -1,4 +1,4 @@
-package ru.avv.test.unikoomapp;
+package ru.avv.unikoomapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,10 +1,10 @@
-package ru.avv.test.unikoomapp.rest;
+package ru.avv.unikoomapp.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.avv.test.unikoomapp.data.dao.PersonDAO;
-import ru.avv.test.unikoomapp.data.entity.Person;
+import ru.avv.unikoomapp.data.dao.PersonDAO;
+import ru.avv.unikoomapp.data.entity.Person;
 
 import java.util.List;
 

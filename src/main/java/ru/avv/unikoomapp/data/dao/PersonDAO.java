@@ -1,6 +1,6 @@
-package ru.avv.test.unikoomapp.data.dao;
+package ru.avv.unikoomapp.data.dao;
 
-import ru.avv.test.unikoomapp.data.entity.Person;
+import ru.avv.unikoomapp.data.entity.Person;
 
 import java.util.List;
 

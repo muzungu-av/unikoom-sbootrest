@@ -1,4 +1,4 @@
-package ru.avv.test.unikoomapp.exception;
+package ru.avv.unikoomapp.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
