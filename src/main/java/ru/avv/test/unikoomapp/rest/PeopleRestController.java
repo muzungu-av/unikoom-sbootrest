@@ -34,11 +34,18 @@ public class PeopleRestController {
 
     @PostMapping(value = "/person",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.TEXT_PLAIN_VALUE)
-    public String addPeople(@RequestBody Person person) {
-        if (personDAO.addOne(person)) {
-            return "Person was created.";
-        } else
-            return "The operation doesn't successful!";
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Person addPeople(@RequestBody Person person) {
+        boolean checkFields = person.getBirthDate() == null
+                || person.getEmail() == null || person.getEmail().isEmpty()
+                || person.getFio() == null || person.getFio().isEmpty()
+                || person.getUserName() == null || person.getUserName().isEmpty()
+                || person.isSex() == null;
+        if (checkFields) {
+            throw new IllegalArgumentException("One or more field is empty.");
+        } else {
+            personDAO.addOne(person);
+            return person;
+        }
     }
 }

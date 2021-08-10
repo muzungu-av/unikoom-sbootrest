@@ -10,5 +10,5 @@ import java.util.List;
 public interface PersonDAO {
     List<Person> findAll();
     Person findById(String id);
-    boolean addOne(Person person);
+    Person addOne(Person person);
 }

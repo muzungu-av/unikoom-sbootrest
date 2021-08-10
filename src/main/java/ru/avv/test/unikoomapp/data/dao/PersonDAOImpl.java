@@ -41,9 +41,9 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Transactional
-    public boolean addOne(Person person) {
+    public Person addOne(Person person) {
         Session session = entityManager.unwrap(Session.class);
         session.save(person);
-        return true;
+        return person;
     }
 }

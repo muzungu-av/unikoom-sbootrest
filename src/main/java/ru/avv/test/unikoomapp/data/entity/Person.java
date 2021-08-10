@@ -31,7 +31,7 @@ public class Person {
     private Date birthDate;
 
     @Column(name = "sex")
-    private boolean sex;
+    private Boolean sex;
 
     public Person() {
     }
@@ -84,11 +84,11 @@ public class Person {
         this.birthDate = birthDate;
     }
 
-    public boolean isSex() {
+    public Boolean isSex() {
         return sex;
     }
 
-    public void setSex(boolean sex) {
+    public void setSex(Boolean sex) {
         this.sex = sex;
     }
 
