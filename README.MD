@@ -47,3 +47,4 @@ Use: SpringBoot, Jpa, Postgres DB
  
 > insert into person (id, user_name, fio, email, birth_date, sex)
 > VALUES(2, 'olga','Olga Avakina', 'olga@mail.ru', '1990-12-01', false);
+
