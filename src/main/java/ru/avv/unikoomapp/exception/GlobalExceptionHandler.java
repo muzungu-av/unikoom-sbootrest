@@ -1,6 +1,7 @@
 package ru.avv.unikoomapp.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -53,6 +54,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, HttpMessageNotReadableException ex) {
         ErrorResponse response = new ErrorResponse("Something that doesn't look like valid JSON.", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    @ResponseBody
+    ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, DataIntegrityViolationException ex) {
+        ErrorResponse response = new ErrorResponse("Inconsistent data.", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
