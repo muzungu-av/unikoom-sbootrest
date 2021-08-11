@@ -54,7 +54,6 @@ Use: SpringBoot, Jpa, Postgres DB
 >   file_hash text NOT NULL, \
 >   file_name text NOT NULL, \
 >   person_id int NOT NULL, \
->   UNIQUE (file_hash), \
 >   UNIQUE (file_hash, person_id), \
 >   CONSTRAINT person_id \
 >   FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE)
