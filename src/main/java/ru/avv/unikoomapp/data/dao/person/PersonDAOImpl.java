@@ -1,4 +1,4 @@
-package ru.avv.unikoomapp.data.dao;
+package ru.avv.unikoomapp.data.dao.person;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -9,6 +9,7 @@ import ru.avv.unikoomapp.data.entity.Person;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Data storage and access mechanism layer the Person table
@@ -24,11 +25,14 @@ public class PersonDAOImpl implements PersonDAO {
     }
 
     @Transactional
-    public List<Person> findAll() {
+    public String findAll() {
         Session session = entityManager.unwrap(Session.class);
         Query<Person> query = session.createQuery("from Person", Person.class);
         List<Person> people = query.getResultList();
-        return people;
+        String peopleStringAccum = people.stream()
+                .map(person ->  person.toShortJsonString())
+                .collect(Collectors.joining(",", "[", "]") );
+        return peopleStringAccum;
     }
 
     @Transactional

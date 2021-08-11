@@ -15,7 +15,7 @@ public class Person {
     @Id
     @SequenceGenerator(name = "jpaSequence", sequenceName = "JPA_SEQUENCE", allocationSize = 1, initialValue = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "jpaSequence")
-    @Column(name = "ID")
+    @Column(name = "id")
     private long id;
 
     @Column(name = "user_name")
@@ -102,6 +102,24 @@ public class Person {
                 ", birthDate=" + birthDate +
                 ", sex=" + sex +
                 '}';
+    }
+
+    public String toShortJsonString() {
+        return "{" +
+                "\"id\" : " + id +
+                ", \"userName\" : \"" + userName + "\"" +
+                ", \"fio\" : \"" + fio + "\"}";
+    }
+
+    public String toJsonString() {
+        return "{" +
+                "\"id\" : " + id +
+                ", \"userName\" : \"" + userName + "\"" +
+                ", \"fio\" : \"" + fio + "\"" +
+                ", \"email\" : \"" + email + "\"" +
+                ", \"birthDate\" : \"" + String.format("%tY-%1$tm-%1$te", birthDate) + "\"" +
+                ", \"sex\" : " + sex + ""
+                + "}";
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, DataIntegrityViolationException ex) {
         ErrorResponse response = new ErrorResponse("Inconsistent data.", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    @ResponseBody
+    ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, MaxUploadSizeExceededException ex) {
+        ErrorResponse response = new ErrorResponse("File size too big.", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

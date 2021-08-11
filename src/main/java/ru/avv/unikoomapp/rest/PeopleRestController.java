@@ -2,10 +2,18 @@ package ru.avv.unikoomapp.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-import ru.avv.unikoomapp.data.dao.PersonDAO;
+import org.springframework.web.multipart.MultipartFile;
+import ru.avv.unikoomapp.data.dao.foto.FotoDAO;
+import ru.avv.unikoomapp.data.dao.person.PersonDAO;
+import ru.avv.unikoomapp.data.entity.Foto;
 import ru.avv.unikoomapp.data.entity.Person;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -14,28 +22,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class PeopleRestController {
+
     private PersonDAO personDAO;
+    private FotoDAO fotoDAO;
 
     @Autowired
-    public PeopleRestController(PersonDAO personDAO) {
+    public PeopleRestController(PersonDAO personDAO, FotoDAO fotoDAO) {
         this.personDAO = personDAO;
+        this.fotoDAO = fotoDAO;
     }
 
-    @GetMapping("/people")
-    public List<Person> getPeople() {
+    @GetMapping(value = "/people", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllPeople() {
         return personDAO.findAll();
     }
 
-    @GetMapping("/person/{id}")
-    public String getPeople(@PathVariable String id) {
+    @GetMapping(value = "/person/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getOnePerson(@PathVariable String id) {
         Person person = personDAO.findById(id);
-        return person.toString();
+        return person.toJsonString();
     }
 
     @PostMapping(value = "/person",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person addPeople(@RequestBody Person person) {
+    public Person addOnePerson(@RequestBody Person person) {
         boolean checkFields = person.getBirthDate() == null
                 || person.getEmail() == null || person.getEmail().isEmpty()
                 || person.getFio() == null || person.getFio().isEmpty()
@@ -48,4 +59,31 @@ public class PeopleRestController {
             return person;
         }
     }
+
+    @PostMapping(value = "/foto")
+    public String addFoto(@RequestParam MultipartFile file,
+                          @RequestParam String user_id) throws IOException {
+        String hash = DigestUtils.md5DigestAsHex(file.getInputStream());
+        InputStream in = file.getInputStream();
+        String filename = "files" + File.separator + hash;
+        File dir = new File(filename);
+        dir.getParentFile().mkdirs();
+
+        FileOutputStream f = new FileOutputStream(dir.getAbsolutePath());
+        int ch = 0;
+        while ((ch = in.read()) != -1) {
+            f.write(ch);
+        }
+        f.flush();
+        f.close();
+
+        return file.getName();
+    }
+
+    @GetMapping(value = "/fotos/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Foto> getFotosListDescription(@PathVariable String person_id) {
+        List<Foto> fotos = fotoDAO.findAll(person_id);
+        return fotos;
+    }
+
 }
