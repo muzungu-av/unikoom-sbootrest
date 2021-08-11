@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -69,6 +71,20 @@ public class GlobalExceptionHandler {
     @ResponseBody
     ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, MaxUploadSizeExceededException ex) {
         ErrorResponse response = new ErrorResponse("File size too big.", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = MissingPathVariableException.class)
+    @ResponseBody
+    ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, MissingPathVariableException ex) {
+        ErrorResponse response = new ErrorResponse("Missing Path Variable.", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = FileNotFoundException.class)
+    @ResponseBody
+    ResponseEntity<ErrorResponse> handleNullPointerException(HttpServletRequest request, FileNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse("File Not Found.", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

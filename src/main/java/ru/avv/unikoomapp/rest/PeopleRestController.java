@@ -1,7 +1,10 @@
 package ru.avv.unikoomapp.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,11 +12,11 @@ import ru.avv.unikoomapp.data.dao.foto.FotoDAO;
 import ru.avv.unikoomapp.data.dao.person.PersonDAO;
 import ru.avv.unikoomapp.data.entity.Foto;
 import ru.avv.unikoomapp.data.entity.Person;
+import ru.avv.unikoomapp.exception.ErrorResponse;
+import ru.avv.unikoomapp.service.FileService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -25,11 +28,13 @@ public class PeopleRestController {
 
     private PersonDAO personDAO;
     private FotoDAO fotoDAO;
+    private FileService fileService;
 
     @Autowired
-    public PeopleRestController(PersonDAO personDAO, FotoDAO fotoDAO) {
+    public PeopleRestController(PersonDAO personDAO, FotoDAO fotoDAO, FileService fileService) {
         this.personDAO = personDAO;
         this.fotoDAO = fotoDAO;
+        this.fileService = fileService;
     }
 
     @GetMapping(value = "/people", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,28 +67,44 @@ public class PeopleRestController {
 
     @PostMapping(value = "/foto")
     public String addFoto(@RequestParam MultipartFile file,
-                          @RequestParam String user_id) throws IOException {
+                          @RequestParam String person_id) throws IOException {
+
         String hash = DigestUtils.md5DigestAsHex(file.getInputStream());
-        InputStream in = file.getInputStream();
-        String filename = "files" + File.separator + hash;
-        File dir = new File(filename);
-        dir.getParentFile().mkdirs();
-
-        FileOutputStream f = new FileOutputStream(dir.getAbsolutePath());
-        int ch = 0;
-        while ((ch = in.read()) != -1) {
-            f.write(ch);
+        if (!fileService.storeFile(file, hash).isEmpty()) {
+            Foto foto = new Foto();
+            foto.setPersonId(Long.decode(person_id));
+            foto.setFileHash(hash);
+            foto.setFileName(file.getOriginalFilename());
+            fotoDAO.addOne(foto);
         }
-        f.flush();
-        f.close();
-
-        return file.getName();
+        return hash;
     }
 
-    @GetMapping(value = "/fotos/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/fotos/{person_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Foto> getFotosListDescription(@PathVariable String person_id) {
         List<Foto> fotos = fotoDAO.findAll(person_id);
         return fotos;
     }
 
+    @GetMapping("/foto/{file_hash}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String file_hash, HttpServletRequest request) throws FileNotFoundException {
+        Resource resource = fileService.loadFileAsResource(file_hash);
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            ErrorResponse response = new ErrorResponse("IO Exception", ex.getMessage());
+            return ResponseEntity.internalServerError().body(resource);
+        }
+
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
 }
