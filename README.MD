@@ -18,13 +18,13 @@ Use: SpringBoot, Jpa, Postgres DB
 - change my-postgres.conf
 
 - run postgres with new custom config
-> docker run -d --name postgres /\
-> -p 5432:5432 /\
-> -v "$PWD/my-postgres.conf":/etc/postgresql/postgresql.conf /\
-> -v /DATA/tmp_dockers_mount/postgres:/var/lib/postgresql/data /\
-> -e POSTGRES_PASSWORD=123456 /\
-> -e PGDATA=/var/lib/postgresql/data /\
-> postgres:13 /\
+> docker run -d --name postgres \\
+> -p 5432:5432 \\
+> -v "$PWD/my-postgres.conf":/etc/postgresql/postgresql.conf \\
+> -v /DATA/tmp_dockers_mount/postgres:/var/lib/postgresql/data \\
+> -e POSTGRES_PASSWORD=123456 \\
+> -e PGDATA=/var/lib/postgresql/data \\
+> postgres:13 \\
 > -c 'config_file=/etc/postgresql/postgresql.conf'
 
 - creating a database in a container
