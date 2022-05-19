@@ -10,10 +10,10 @@ Use: SpringBoot, Jpa, Postgres DB
 
 ###  What needs to prepare
 - make docker image
-> docker pull postgres
+> docker pull postgres:13
 
 - if you want to configure Postgres config file
-> docker run -i --rm postgres cat /usr/share/postgresql/postgresql.conf.sample > my-postgres.conf
+> docker run -i --rm postgres:13 cat /usr/share/postgresql/postgresql.conf.sample > my-postgres.conf
 
 - change my-postgres.conf
 
@@ -24,8 +24,8 @@ Use: SpringBoot, Jpa, Postgres DB
 > -v /DATA/tmp_dockers_mount/postgres:/var/lib/postgresql/data \
 > -e POSTGRES_PASSWORD=123456 \
 > -e PGDATA=/var/lib/postgresql/data \
+> postgres:13
 > -c 'config_file=/etc/postgresql/postgresql.conf' \
-> postgres
 
 - creating a database in a container
 
